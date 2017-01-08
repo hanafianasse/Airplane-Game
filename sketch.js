@@ -48,7 +48,7 @@ function setup() {
 	backgroundAudio = new Audio('assets/musics/background.mp3');
 
 	backgroundAudio.loop = true;
-	//backgroundAudio.play();
+	backgroundAudio.play();
 
 	lose = false;
 	
