@@ -30,6 +30,8 @@ var btnReplayUrl;
 var logoGameUrl;
 var GameOverUrl;
 
+var backgroundAudio;
+
 function setup() {
 	createCanvas(WIDTH,HEIGHT);
 	noCursor();
@@ -43,7 +45,13 @@ function setup() {
 	logoGameUrl = loadImage("assets/images/gamelogo.png");
 	GameOverUrl = loadImage("assets/images/gameover.png");
 
+	backgroundAudio = new Audio('assets/musics/background.mp3');
+
+	backgroundAudio.loop = true;
+	//backgroundAudio.play();
+
 	lose = false;
+	
 	for(var i = 0; i < player.life ;i++){
 		hearts.push(1);
 	}
@@ -186,6 +194,8 @@ function detectColision(){
 
 				missiles.splice(i, 1);
 				enemies.splice(j,1);
+				var explosionAudio = new Audio('assets/musics/explosion.mp3');
+				explosionAudio.play();
 				player.score++;
 				if(player.score > 10){
 					RANDOM = 20;
@@ -236,6 +246,8 @@ function initTheGameVariables(){
 function mouseClicked() {
 	if(mouseX < WIDTH && mouseY < HEIGHT){
 		addMissile(mouseX,mouseY);
+		var shotAudio = new Audio('assets/musics/shot.wav');
+		shotAudio.play();
 	}
 	if(lose && mouseX > 400 && mouseX < 627 && mouseY > 450 && mouseY < 496 ){
 		initTheGameVariables();
