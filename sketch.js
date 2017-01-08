@@ -6,8 +6,6 @@ var WIDTH  = 1000;
 var HEIGHT = 600;
 var RANDOM = 90;
 
-var enemiesKiled = 0;
-
 // background
 var image1 = {url:'', x:0, y:0};
 var image2 = {url:'', x:0, y:0};
@@ -26,6 +24,11 @@ var heartUrl;
 
 var hearts = [];
 
+var lose;
+
+var btnReplayUrl;
+var logoGameUrl;
+var GameOverUrl;
 
 function setup() {
 	createCanvas(WIDTH,HEIGHT);
@@ -36,7 +39,11 @@ function setup() {
 	rocket.urlImage = loadImage("assets/images/rocket2.png");
 	flyingSaucer.urlImage = loadImage("assets/images/enemy.png");
 	heartUrl = loadImage("assets/images/heart.png");
+	btnReplayUrl = loadImage("assets/images/replay.png");
+	logoGameUrl = loadImage("assets/images/gamelogo.png");
+	GameOverUrl = loadImage("assets/images/gameover.png");
 
+	lose = false;
 	for(var i = 0; i < player.life ;i++){
 		hearts.push(1);
 	}
@@ -44,17 +51,35 @@ function setup() {
 
 function draw() {
 	
-	addMissileToEnemies();
-
 	drawBackground();
-	drawEnemiesMissiles();
-	drawEnemies();
-	drawMissiles();
+
+	if(!lose){
+		addMissileToEnemies();
+		drawEnemiesMissiles();
+		drawEnemies();
+		drawMissiles();
+		drawHearts();
+		drawText();
+		detectColision();
+		detectColisionWithEnemeiesAndEnemisesMissiles();
+	}else{
+		drawTheLogo();
+		drawGameOver();
+		drawReplaybtn();
+	}
 	drawPlayer();
-	drawHearts();
-	drawText();
-	detectColision();
-	detectColisionWithEnemeiesAndEnemisesMissiles();
+}
+
+function drawTheLogo(){
+	image(logoGameUrl,380,50);
+}
+
+function drawGameOver(){
+	image(GameOverUrl,325,300);
+}
+
+function drawReplaybtn(){
+	image(btnReplayUrl,400,450);
 }
 
 function drawText(){
@@ -177,6 +202,7 @@ function detectColisionWithEnemeiesAndEnemisesMissiles(){
 			mouseY < enemies[i].y+30 && 128+mouseY > enemies[i].y) {
     		enemies.splice(i,1);			
 			player.life--;
+			break;
 		}
 	}
 	for(var i = 0; i < enemies.length ;i++){
@@ -185,14 +211,34 @@ function detectColisionWithEnemeiesAndEnemisesMissiles(){
 				mouseY< enemies[i].missiles[j].y+15 && 128+mouseY > enemies[i].missiles[j].y) {
 				enemies[i].missiles.splice(j,1);	
 				player.life--;
+				break;
 			}
 		}
 	}
+	if(player.life == 0){
+		lose = true;
+	}
+}
+
+function initTheGameVariables(){
+	missiles = [];
+	enemies = [];
+
+	player.score = 0;
+	player.life = 5;
+
+	for(var i = 0; i < player.life ;i++){
+		hearts.push(1);
+	}
+	lose = false;
 }
 
 function mouseClicked() {
 	if(mouseX < WIDTH && mouseY < HEIGHT){
 		addMissile(mouseX,mouseY);
+	}
+	if(lose && mouseX > 400 && mouseX < 627 && mouseY > 450 && mouseY < 496 ){
+		initTheGameVariables();
 	}
 }
 
