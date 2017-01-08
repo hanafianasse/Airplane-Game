@@ -81,7 +81,7 @@ function drawHearts(){
 function drawEnemies(){
 	var i = 0; 
 	for(i = 0; i < enemies.length ;i++){
-		enemies[i].y += 1.5; 
+		enemies[i].y += 1.5;
 		image(flyingSaucer.urlImage,enemies[i].x,enemies[i].y);
 	}
 	makeItNice();
@@ -99,6 +99,7 @@ function drawPlayer(){
 	image(player.urlImage,mouseX,mouseY);
 }
 
+// player's missiles
 function drawMissiles(){
 	var i = 0;
 	fill(255,0,0);
@@ -151,6 +152,7 @@ function AddEnemie(){
 	return false;
 }
 
+//colision entre une missile lancer par le joueur et un enemie
 function detectColision(){
 	for(var i = 0; i < missiles.length ;i++){
 		for(var j=0; j < enemies.length ;j++){
@@ -171,21 +173,21 @@ function detectColision(){
 
 function detectColisionWithEnemeiesAndEnemisesMissiles(){
 	for(var i = 0; i < enemies.length ;i++){
-		if( mouseX > enemies[i].x && mouseX < enemies[i].x+50 && mouseY > enemies[i].y &&
-			mouseY < enemies[i].y+30 ){
-			enemies.splice(i,1);			
+		if (mouseX < enemies[i].x+50 && mouseX+60 > enemies[i].x &&
+			mouseY < enemies[i].y+30 && 128+mouseY > enemies[i].y) {
+    		enemies.splice(i,1);			
 			player.life--;
 		}
-	}/*
+	}
 	for(var i = 0; i < enemies.length ;i++){
 		for(var j=0; j <enemies[i].missiles.length ;j++){
-			if( mouseX > enemies[i].missiles[j].x && mouseX < enemies[i].missiles[j].x &&
-				mouseY > enemies[i].missiles[j].y && mouseY < enemies[i].missiles[j].y ){
+			if (mouseX < enemies[i].missiles[j].x+6 && mouseX+60 > enemies[i].missiles[j].x &&
+				mouseY< enemies[i].missiles[j].y+15 && 128+mouseY > enemies[i].missiles[j].y) {
 				enemies[i].missiles.splice(j,1);	
 				player.life--;
 			}
 		}
-	}*/
+	}
 }
 
 function mouseClicked() {
