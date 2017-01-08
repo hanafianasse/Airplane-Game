@@ -1,3 +1,10 @@
+/**
+*
+*	@Author : Anasse Hanafi
+*	@Title  : AirPlane Game
+*	@Date   : 02/12/2016
+*
+**/
 
 var missiles = [];
 var enemies = [];
@@ -9,6 +16,9 @@ var RANDOM = 90;
 // background
 var image1 = {url:'', x:0, y:0};
 var image2 = {url:'', x:0, y:0};
+
+var boomsImages = [];
+var booms = [];
 
 // the Player
 var player = {urlImage:'',score:0,life:5};
@@ -45,6 +55,11 @@ function setup() {
 	logoGameUrl = loadImage("assets/images/gamelogo.png");
 	GameOverUrl = loadImage("assets/images/gameover.png");
 
+	for(var i = 0; i < 10 ; i++){
+		var boomImage = loadImage("assets/images/boom/boom"+(++i)+".png");
+		boomsImages.push(boomImage);
+	}
+
 	backgroundAudio = new Audio('assets/musics/background.mp3');
 
 	backgroundAudio.loop = true;
@@ -68,7 +83,10 @@ function draw() {
 		drawMissiles();
 		drawHearts();
 		drawText();
+
 		detectColision();
+		drawBooms();
+
 		detectColisionWithEnemeiesAndEnemisesMissiles();
 	}else{
 		drawTheLogo();
@@ -76,6 +94,22 @@ function draw() {
 		drawReplaybtn();
 	}
 	drawPlayer();
+}
+
+function drawBooms(){
+	for(var i = 0 ; i < booms.length ; i++ ){
+		for(var j = 0 ; j < boomsImages.length ; j++ ){
+			booms[i].drawed = true;
+			for(var k = 0 ; k < 20 ; k++){
+				image(boomsImages[j],booms[i].x,booms[i].y,65,65);
+			}
+		}
+	}
+	for(var i = 0 ; i < booms.length ; i++ ){
+		if(booms[i].drawed){
+			booms.splice(i,1);
+		}
+	}
 }
 
 function drawTheLogo(){
@@ -158,6 +192,8 @@ function makeItNice(){
 	}
 }
 
+
+
 function addMissileToEnemies(){
 	if(AddEnemie()){
 		var index = Math.floor( Math.random() * enemies.length + 0 );
@@ -185,18 +221,23 @@ function AddEnemie(){
 	return false;
 }
 
+function addBoom(_x,_y){
+	var boom = {x:_x, y:_y, drawed:false };
+	booms.push(boom);
+}
+
 //colision entre une missile lancer par le joueur et un enemie
 function detectColision(){
 	for(var i = 0; i < missiles.length ;i++){
 		for(var j=0; j < enemies.length ;j++){
 			if( missiles[i].x+20 > enemies[j].x -20 && missiles[i].x+20 < enemies[j].x + 50 &&
 				missiles[i].y > enemies[j].y && missiles[i].y < enemies[j].y + 25){
-
-				missiles.splice(i, 1);
-				enemies.splice(j,1);
 				var explosionAudio = new Audio('assets/musics/explosion.mp3');
 				explosionAudio.play();
 				player.score++;
+				addBoom(enemies[j].x,enemies[j].y);
+				missiles.splice(i, 1);
+				enemies.splice(j,1);
 				if(player.score > 10){
 					RANDOM = 20;
 				}
@@ -221,6 +262,8 @@ function detectColisionWithEnemeiesAndEnemisesMissiles(){
 				mouseY< enemies[i].missiles[j].y+15 && 128+mouseY > enemies[i].missiles[j].y) {
 				enemies[i].missiles.splice(j,1);	
 				player.life--;
+				var enemiesShotedMeAudio = new Audio("assets/musics/enemieShotMe.wav");
+				enemiesShotedMeAudio.play();
 				break;
 			}
 		}
